@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>V3 Timer Challenge</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#111827;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.card{
+background:#1f2937;
+padding:30px;
+border-radius:20px;
+text-align:center;
+width:380px;
+}
+
+#timer{
+font-size:70px;
+margin:20px;
+font-weight:bold;
+}
+
+button{
+padding:15px 30px;
+font-size:18px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+margin:10px;
+}
+
+#start{
+background:#22c55e;
+color:white;
+}
+
+#stop{
+background:#ef4444;
+color:white;
+}
+
+#result{
+margin-top:20px;
+font-size:24px;
+font-weight:bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>🍛 Free Biryani Challenge</h1>
+
+<div id="timer">0.00</div>
+
+<button id="start">START</button>
+
+<button id="stop">STOP</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+let timer=0;
+let interval;
+
+document.getElementById("start").onclick=function(){
+
+timer=0;
+
+document.getElementById("result").innerHTML="";
+
+interval=setInterval(function(){
+
+timer+=0.01;
+
+document.getElementById("timer").innerHTML=timer.toFixed(2);
+
+},10);
+
+}
+
+document.getElementById("stop").onclick=function(){
+
+clearInterval(interval);
+
+if(timer>=11.10 && timer<=11.12){
+
+document.getElementById("result").innerHTML="🎉 You Won Free Biryani";
+
+}else{
+
+document.getElementById("result").innerHTML="❌ Better Luck Next Time";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
