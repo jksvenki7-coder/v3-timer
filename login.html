@@ -1,86 +1,198 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - V3 Group of Business</title>
+
+<title>V3 Group of Business Login</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
+font-family:'Poppins',sans-serif;
 }
 
 body{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
+
 background:linear-gradient(135deg,#007AFF,#00C6FF);
+
+height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+padding:20px;
+
 }
 
 .card{
-width:400px;
-max-width:95%;
-background:white;
-padding:30px;
-border-radius:20px;
-box-shadow:0 20px 40px rgba(0,0,0,.2);
+
+width:100%;
+max-width:420px;
+
+background:#fff;
+
+border-radius:25px;
+
+padding:35px;
+
+box-shadow:0 25px 50px rgba(0,0,0,.25);
+
+animation:fade .6s;
+
+}
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:translateY(30px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+.logo{
+
+font-size:30px;
+
+font-weight:700;
+
 text-align:center;
-}
 
-h1{
 color:#007AFF;
+
 margin-bottom:10px;
+
 }
 
-h2{
-margin-bottom:20px;
-color:#333;
+.subtitle{
+
+text-align:center;
+
+color:#666;
+
+margin-bottom:25px;
+
 }
 
 input{
+
 width:100%;
+
 padding:15px;
-margin:10px 0;
-border-radius:10px;
-border:1px solid #ccc;
+
+margin-top:15px;
+
+border-radius:12px;
+
+border:1px solid #ddd;
+
 font-size:16px;
+
 outline:none;
+
+transition:.3s;
+
 }
 
 input:focus{
+
 border-color:#007AFF;
+
+box-shadow:0 0 10px rgba(0,122,255,.25);
+
 }
 
 button{
+
 width:100%;
+
 padding:15px;
-margin-top:15px;
-background:#007AFF;
-color:white;
+
+margin-top:20px;
+
 border:none;
-border-radius:10px;
+
+border-radius:12px;
+
+background:#007AFF;
+
+color:white;
+
 font-size:18px;
+
+font-weight:600;
+
 cursor:pointer;
-font-weight:bold;
+
+transition:.3s;
+
 }
 
 button:hover{
-background:#0056d6;
+
+background:#005edb;
+
 }
 
-#recaptcha-container{
-margin-top:15px;
+#otpBox{
+
+display:none;
+
 }
 
-p{
+#verifyBtn{
+
+display:none;
+
+background:#28a745;
+
+}
+
+#status{
+
 margin-top:20px;
-font-size:14px;
-color:#666;
+
+text-align:center;
+
+font-weight:600;
+
+color:#007AFF;
+
 }
+
+.small{
+
+margin-top:15px;
+
+text-align:center;
+
+font-size:13px;
+
+color:#888;
+
+}
+
 </style>
 
 </head>
@@ -89,56 +201,252 @@ color:#666;
 
 <div class="card">
 
-<h1>V3 GROUP OF BUSINESS</h1>
+<div class="logo">
 
-<h2>Free Biryani Challenge</h2>
+V3 GROUP OF BUSINESS
+
+</div>
+
+<div class="subtitle">
+
+Free Biryani Challenge Login
+
+</div>
 
 <input
 type="text"
 id="name"
-placeholder="Enter Your Name"
-required>
+placeholder="Enter Your Name">
 
 <input
 type="tel"
 id="phone"
-placeholder="Enter Mobile Number"
-maxlength="10"
-required>
+placeholder="Enter Mobile Number">
 
 <div id="recaptcha-container"></div>
 
-<button onclick="continueGame()">
-Continue
+<button id="sendOtpBtn">
+
+Send OTP
+
 </button>
 
-<p>One Mobile Number = One Attempt Per Day</p>
+<div id="otpBox">
+
+<input
+type="number"
+id="otp"
+placeholder="Enter OTP">
 
 </div>
 
-<script>
-function continueGame(){
+<button id="verifyBtn">
+
+Verify OTP
+
+</button>
+
+<div id="status"></div>
+
+<div class="small">
+
+One Mobile Number = One Attempt Per Day
+
+</div<!-- Firebase SDK -->
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getAuth,
+RecaptchaVerifier,
+signInWithPhoneNumber
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+getFirestore,
+doc,
+getDoc,
+setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: " AIzaSyCoCuThFeKjCY7ovam-PGIeY0mf37K5oJw",
+authDomain: "v3-timer-929d2.firebaseapp.com",
+
+projectId: "v3-timer-929d2",
+
+storageBucket: "v3-timer-929d2.firebasestorage.app",
+
+messagingSenderId: "721042527013",
+
+appId: "1:721042527013:web:694ccce77e908a72bbc0cc"
+
+};
+
+const app=initializeApp(firebaseConfig);
+
+const auth=getAuth(app);
+
+const db=getFirestore(app);
+
+window.recaptchaVerifier=new RecaptchaVerifier(auth,"recaptcha-container",{
+
+size:"normal"
+
+});
+
+const sendOtpBtn=document.getElementById("sendOtpBtn");
+
+const verifyBtn=document.getElementById("verifyBtn");
+
+const otpBox=document.getElementById("otpBox");
+
+const status=document.getElementById("status");
+
+let confirmationResult;sendOtpBtn.addEventListener("click",async()=>{
 
 const name=document.getElementById("name").value.trim();
+
 const phone=document.getElementById("phone").value.trim();
 
 if(name==""){
+
 alert("Please Enter Your Name");
+
 return;
+
 }
 
 if(phone.length!=10){
+
 alert("Enter Valid Mobile Number");
+
 return;
+
 }
 
+status.innerHTML="Checking...";
+
+const docRef=doc(db,"users",phone);
+
+const docSnap=await getDoc(docRef);
+
+if(docSnap.exists()){
+
+const data=docSnap.data();
+
+const today=new Date().toLocaleDateString();
+
+if(data.lastPlayed==today){
+
+status.innerHTML="❌ You already played today.";
+
+return;
+
+}
+
+}
+
+const appVerifier=window.recaptchaVerifier;
+
+signInWithPhoneNumber(
+
+auth,
+
+"+91"+phone,
+
+appVerifier
+
+)
+
+.then((result)=>{
+
+confirmationResult=result;
+
+otpBox.style.display="block";
+
+verifyBtn.style.display="block";
+
+status.innerHTML="✅ OTP Sent Successfully";
+
+})
+
+.catch((error)=>{
+
+console.log(error);
+
+status.innerHTML="❌ OTP Failed. Try Again.";
+
+});verifyBtn.addEventListener("click", async () => {
+
+const otp = document.getElementById("otp").value.trim();
+
+if(otp==""){
+
+alert("Please Enter OTP");
+
+return;
+
+}
+
+confirmationResult.confirm(otp)
+
+.then(async(result)=>{
+
+const user=result.user;
+
+const name=document.getElementById("name").value.trim();
+
+const phone=document.getElementById("phone").value.trim();
+
+const today=new Date().toLocaleDateString();
+
+await setDoc(doc(db,"users",phone),{
+
+name:name,
+
+phone:phone,
+
+lastPlayed:today,
+
+points:0,
+
+createdAt:new Date().toISOString()
+
+},{merge:true});
+
+status.innerHTML="✅ Login Successful";
+
 localStorage.setItem("playerName",name);
+
 localStorage.setItem("playerPhone",phone);
+
+setTimeout(()=>{
 
 window.location.href="challenge.html";
 
-}
+},1500);
+
+})
+
+.catch((error)=>{
+
+console.log(error);
+
+status.innerHTML="❌ Invalid OTP";
+
+});
+
+});
+
 </script>
 
+</div>
+
 </body>
+
 </html>
+
+});
